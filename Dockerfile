@@ -1,20 +1,33 @@
-# Base image: use the official Node.js LTS image
-FROM node:18
+# First stage: Development environment
+FROM node:22 AS development
 
-# Set the working directory in the container
-WORKDIR /srv/app
+# Create and set the working directory inside the container
+WORKDIR /srv/node/app
 
-# Copy the package.json and package-lock.json
+# Install nodemon globally for development environment
+RUN npm install -g nodemon
+
+# Copy package.json and install dependencies
 COPY package*.json ./
-
-# Install any dependencies (none in this case)
 RUN npm install
 
 # Copy the rest of the application
 COPY . .
 
-# Expose the port that the application will run on
+# Change the owner of the project files to the node user
+RUN chown -R node /srv/node/app
+
+# Switch to the node user
+USER node
+
+# Expose the port the app runs on
 EXPOSE 3000
 
-# Start the application
-CMD [ "node", "app.js" ]
+# Expose the debugging port
+EXPOSE 9229
+
+# Set the NODE_ENV environment variable to development by default
+ENV NODE_ENV=development
+
+# Use nodemon for automatic server reloads in development
+CMD ["nodemon", "--inspect=0.0.0.0:9229", "server.js"]
