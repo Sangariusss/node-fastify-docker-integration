@@ -1,4 +1,4 @@
-# Fastify Docker Integration
+# Fastify Docker Integration with PostgreSQL and MongoDB
 
 ## Table of Contents
 
@@ -10,16 +10,25 @@
 
 ## Overview
 
-This project demonstrates how to set up a Fastify server inside a Docker container, using Docker Compose for orchestration, and Nginx for proxying API requests and serving static files. The Fastify server includes several RESTful endpoints for managing resources, and Nginx handles traffic proxying for the `/api` routes and serves static assets.
+This project demonstrates how to set up a Fastify server inside a Docker container, using Docker Compose for orchestration, and Nginx for proxying API requests and serving static files. The Fastify server integrates with both PostgreSQL and MongoDB, allowing for CRUD operations on resources stored in each database.
 
 ### Features
 
 - **Fastify REST API**:
-  - `GET /api/resources`: Retrieve all resources.
-  - `GET /api/resources/:id`: Retrieve a specific resource by ID.
-  - `POST /api/resources`: Create a new resource.
-  - `PUT /api/resources/:id`: Update an existing resource.
-  - `DELETE /api/resources/:id`: Delete a resource by ID.
+  - **PostgreSQL Endpoints**:
+    - `GET /api/pg/resources`: Retrieve all resources from PostgreSQL.
+    - `GET /api/pg/resources/:id`: Retrieve a specific resource from PostgreSQL by ID.
+    - `POST /api/pg/resources`: Create a new resource in PostgreSQL.
+    - `PUT /api/pg/resources/:id`: Update an existing resource in PostgreSQL.
+    - `DELETE /api/pg/resources/:id`: Delete a resource from PostgreSQL by ID.
+
+  - **MongoDB Endpoints**:
+    - `GET /api/mongo/resources`: Retrieve all resources from MongoDB.
+    - `GET /api/mongo/resources/:id`: Retrieve a specific resource from MongoDB by ID.
+    - `POST /api/mongo/resources`: Create a new resource in MongoDB.
+    - `PUT /api/mongo/resources/:id`: Update an existing resource in MongoDB.
+    - `DELETE /api/mongo/resources/:id`: Delete a resource from MongoDB by ID.
+
 - **Nginx**: Serves static files and proxies API requests to the Fastify backend.
 - **Docker**: The project is fully containerized with Docker and uses Docker Compose to orchestrate the services.
 
@@ -35,20 +44,31 @@ This project demonstrates how to set up a Fastify server inside a Docker contain
     cd node-fastify-docker-integration
     ```
 
-3. **Run the Application**:
+3. **Configure Environment Variables**:
+    Update the `.env` file with the correct database credentials and other configurations as needed.
+
+4. **Run the Application**:
     - Start the services using Docker Compose:
       ```bash
       docker-compose up --build
       ```
 
-4. **Access the Application**:
+5. **Access the Application**:
     - Visit `http://localhost` in your browser to access static files served by Nginx.
     - Use tools like Postman or curl to access the REST API endpoints:
-        - `GET http://localhost/api/resources`: To get the list of all resources.
-        - `GET http://localhost/api/resources/:id`: To fetch a specific resource by ID.
-        - `POST http://localhost/api/resources`: To create a new resource (send a JSON body).
-        - `PUT http://localhost/api/resources/:id`: To update a specific resource (send a JSON body).
-        - `DELETE http://localhost/api/resources/:id`: To delete a specific resource.
+        - **PostgreSQL**:
+            - `GET http://localhost/api/pg/resources`: To get the list of all PostgreSQL resources.
+            - `GET http://localhost/api/pg/resources/:id`: To fetch a specific PostgreSQL resource by ID.
+            - `POST http://localhost/api/pg/resources`: To create a new PostgreSQL resource (send a JSON body).
+            - `PUT http://localhost/api/pg/resources/:id`: To update a specific PostgreSQL resource (send a JSON body).
+            - `DELETE http://localhost/api/pg/resources/:id`: To delete a specific PostgreSQL resource.
+
+        - **MongoDB**:
+            - `GET http://localhost/api/mongo/resources`: To get the list of all MongoDB resources.
+            - `GET http://localhost/api/mongo/resources/:id`: To fetch a specific MongoDB resource by ID.
+            - `POST http://localhost/api/mongo/resources`: To create a new MongoDB resource (send a JSON body).
+            - `PUT http://localhost/api/mongo/resources/:id`: To update a specific MongoDB resource (send a JSON body).
+            - `DELETE http://localhost/api/mongo/resources/:id`: To delete a specific MongoDB resource.
 
 ## File Structure
 
@@ -67,7 +87,7 @@ This project demonstrates how to set up a Fastify server inside a Docker contain
 
 - **app.js**: The main Fastify application file.
 
-- **docker-compose.yml**: Docker Compose file defining services for Fastify and Nginx.
+- **docker-compose.yml**: Docker Compose file defining services for Fastify, PostgreSQL, and MongoDB.
 
 - **Dockerfile**: Instructions for building the Docker image for the Fastify application.
 
