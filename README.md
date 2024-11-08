@@ -69,21 +69,32 @@ This project sets up a Fastify server within a Docker container, using Docker Co
 
 ## Endpoints
 
-### PostgreSQL Endpoints
+### Products Endpoints
 
-- **GET /api/pg/resources**: Retrieve all resources.
-- **GET /api/pg/resources/:id**: Retrieve a resource by ID.
-- **POST /api/pg/resources**: Create a new resource.
-- **PUT /api/pg/resources/:id**: Update a resource by ID.
-- **DELETE /api/pg/resources/:id**: Delete a resource by ID.
+- **GET /api/products**: Retrieve all products.
+- **GET /api/products/:id**: Retrieve a product by ID.
+- **POST /api/products**: Create a new product.
+- **PUT /api/products/:id**: Update a product by ID.
+- **DELETE /api/products/:id**: Delete a product by ID.
 
-### MongoDB Endpoints
+### User Cart Endpoints
 
-- **GET /api/mongo/resources**: Retrieve all resources.
-- **GET /api/mongo/resources/:id**: Retrieve a resource by ID.
-- **POST /api/mongo/resources**: Create a new resource.
-- **PUT /api/mongo/resources/:id**: Update a resource by ID.
-- **DELETE /api/mongo/resources/:id**: Delete a resource by ID.
+- **GET /api/user/cart**: Retrieve the user's cart.
+- **POST /api/user/cart**: Add a product to the cart.
+- **DELETE /api/user/cart/:id**: Remove a product from the cart.
+- **POST /api/user/cart/checkout**: Checkout the cart and create a receipt.
+
+### User Endpoints
+
+- **GET /api/user/:id**: Retrieve a user by ID.
+- **POST /api/user**: Create a new user.
+- **GET /api/user/receipts**: Retrieve all receipts for the user.
+- **GET /api/user/receipts/:id**: Retrieve a receipt by ID.
+
+### Receipts Endpoints
+
+- **GET /api/user/receipts/:id**: Retrieve a receipt by ID.
+- **GET /api/user/receipts**: Retrieve a list of receipts.
 
 ### Additional Endpoints
 
