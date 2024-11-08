@@ -5,101 +5,102 @@
 - [Overview](#overview)
 - [Usage](#usage)
 - [File Structure](#file-structure)
+- [Endpoints](#endpoints)
 - [Contributions](#contributions)
 - [License](#license)
 
 ## Overview
 
-This project demonstrates how to set up a Fastify server inside a Docker container, using Docker Compose for orchestration, and Nginx for proxying API requests and serving static files. The Fastify server integrates with both PostgreSQL and MongoDB, allowing for CRUD operations on resources stored in each database.
+This project sets up a Fastify server within a Docker container, using Docker Compose for service orchestration and Nginx for API proxying and static file serving. The Fastify server integrates with both PostgreSQL and MongoDB, supporting CRUD operations on resources in each database and includes Swagger documentation.
 
 ### Features
 
-- **Fastify REST API**:
-  - **PostgreSQL Endpoints**:
-    - `GET /api/pg/resources`: Retrieve all resources from PostgreSQL.
-    - `GET /api/pg/resources/:id`: Retrieve a specific resource from PostgreSQL by ID.
-    - `POST /api/pg/resources`: Create a new resource in PostgreSQL.
-    - `PUT /api/pg/resources/:id`: Update an existing resource in PostgreSQL.
-    - `DELETE /api/pg/resources/:id`: Delete a resource from PostgreSQL by ID.
-
-  - **MongoDB Endpoints**:
-    - `GET /api/mongo/resources`: Retrieve all resources from MongoDB.
-    - `GET /api/mongo/resources/:id`: Retrieve a specific resource from MongoDB by ID.
-    - `POST /api/mongo/resources`: Create a new resource in MongoDB.
-    - `PUT /api/mongo/resources/:id`: Update an existing resource in MongoDB.
-    - `DELETE /api/mongo/resources/:id`: Delete a resource from MongoDB by ID.
-
-- **Nginx**: Serves static files and proxies API requests to the Fastify backend.
-- **Docker**: The project is fully containerized with Docker and uses Docker Compose to orchestrate the services.
+- **Fastify REST API** with CRUD functionality for PostgreSQL and MongoDB.
+- **Swagger Documentation** available at `/api/docs`, with Basic Authentication enabled for restricted access.
+- **Nginx**: Serves static files and proxies API requests to the Fastify backend, caching static files for improved performance.
+- **Docker**: Containerized deployment with Docker Compose for seamless service orchestration.
 
 ## Usage
 
 ### Setup and Deployment
 
-1. **Install Docker and Docker Compose**: Ensure Docker and Docker Compose are installed on your system.
+1. **Install Docker and Docker Compose**: Ensure they are installed on your system.
 
 2. **Clone the Repository**:
-    ```bash
-    git clone https://github.com/sangariusss/node-fastify-docker-integration.git
-    cd node-fastify-docker-integration
-    ```
+
+   ```bash
+   git clone https://github.com/sangariusss/node-fastify-docker-integration.git
+   cd node-fastify-docker-integration
+   ```
 
 3. **Configure Environment Variables**:
-    Update the `.env` file with the correct database credentials and other configurations as needed.
+   Update the `.env` file with the database credentials and any other configurations needed.
 
 4. **Run the Application**:
-    - Start the services using Docker Compose:
-      ```bash
-      docker-compose up --build
-      ```
+
+   ```bash
+   docker-compose up --build
+   ```
 
 5. **Access the Application**:
-    - Visit `http://localhost` in your browser to access static files served by Nginx.
-    - Use tools like Postman or curl to access the REST API endpoints:
-        - **PostgreSQL**:
-            - `GET http://localhost/api/pg/resources`: To get the list of all PostgreSQL resources.
-            - `GET http://localhost/api/pg/resources/:id`: To fetch a specific PostgreSQL resource by ID.
-            - `POST http://localhost/api/pg/resources`: To create a new PostgreSQL resource (send a JSON body).
-            - `PUT http://localhost/api/pg/resources/:id`: To update a specific PostgreSQL resource (send a JSON body).
-            - `DELETE http://localhost/api/pg/resources/:id`: To delete a specific PostgreSQL resource.
-
-        - **MongoDB**:
-            - `GET http://localhost/api/mongo/resources`: To get the list of all MongoDB resources.
-            - `GET http://localhost/api/mongo/resources/:id`: To fetch a specific MongoDB resource by ID.
-            - `POST http://localhost/api/mongo/resources`: To create a new MongoDB resource (send a JSON body).
-            - `PUT http://localhost/api/mongo/resources/:id`: To update a specific MongoDB resource (send a JSON body).
-            - `DELETE http://localhost/api/mongo/resources/:id`: To delete a specific MongoDB resource.
+   - Visit `http://localhost` for static files served by Nginx.
+   - Use `http://localhost/api` for the REST API endpoints (details below).
+   - Access Swagger documentation at `http://localhost/api/docs` (requires Basic Authentication).
 
 ## File Structure
 
-- **html/**: Contains the static HTML files served by Nginx.
-    - `404.html`: Custom 404 error page.
+- **html/**: Contains static HTML files served by Nginx.
+
+  - `404.html`: Custom 404 error page.
 
 - **nginx/**: Nginx configuration folder.
-    - `nginx.conf`: Configuration file for setting up Nginx proxying and static file serving.
 
-- **static/**: Static assets like images or icons.
-    - `favicon.svg`: Favicon for the application.
+  - `nginx.conf`: Configures Nginx proxying and static file handling.
 
-- **.dockerignore**: Specifies files and directories to ignore in Docker builds.
+- **static/**: Static assets (e.g., favicon).
 
-- **.gitignore**: Specifies files and directories to ignore in Git.
+  - `favicon.svg`: Favicon for the application.
 
 - **app.js**: The main Fastify application file.
+- **docker-compose.yml**: Defines services for Fastify, PostgreSQL, and MongoDB.
+- **Dockerfile**: Docker instructions for building the Fastify app image.
+- **LICENSE**: Project license.
+- **package.json**: Node.js dependencies and metadata.
 
-- **docker-compose.yml**: Docker Compose file defining services for Fastify, PostgreSQL, and MongoDB.
+## Endpoints
 
-- **Dockerfile**: Instructions for building the Docker image for the Fastify application.
+### PostgreSQL Endpoints
 
-- **LICENSE**: The project license (if applicable).
+- **GET /api/pg/resources**: Retrieve all resources.
+- **GET /api/pg/resources/:id**: Retrieve a resource by ID.
+- **POST /api/pg/resources**: Create a new resource.
+- **PUT /api/pg/resources/:id**: Update a resource by ID.
+- **DELETE /api/pg/resources/:id**: Delete a resource by ID.
 
-- **package.json**: Node.js dependencies and project metadata.
+### MongoDB Endpoints
 
-- **README.md**: Project documentation.
+- **GET /api/mongo/resources**: Retrieve all resources.
+- **GET /api/mongo/resources/:id**: Retrieve a resource by ID.
+- **POST /api/mongo/resources**: Create a new resource.
+- **PUT /api/mongo/resources/:id**: Update a resource by ID.
+- **DELETE /api/mongo/resources/:id**: Delete a resource by ID.
+
+### Additional Endpoints
+
+- **Swagger Documentation**: Available at `/api/docs` (requires Basic Authentication).
+- **Static Files**:
+  - **Root `/`**: Serves `index.html` and other HTML files.
+  - **/static/**: Caches static assets for 7 days.
+
+## Nginx Configuration Highlights
+
+- **API Proxying**: `/api` is proxied to the Fastify server, stripping the `/api` prefix.
+- **Swagger Documentation**: `/api/docs` endpoint is protected with Basic Authentication.
+- **Static Caching**: Files served from `/docs/static/` are cached for 7 days.
 
 ## Contributions
 
-Contributions, feedback, and suggestions are welcome. Feel free to submit a pull request or open an issue if you have any improvements or find issues.
+Contributions, feedback, and suggestions are welcome. Please submit a pull request or open an issue for any improvements or issues.
 
 ## License
 
