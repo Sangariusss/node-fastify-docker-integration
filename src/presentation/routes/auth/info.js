@@ -1,28 +1,20 @@
-const { GetUserAction } = require('../../../app/actions/user/GetUser');
-
 /**
  *
  * @param {import('fastify').FastifyInstance} fastify
  * @returns {import('fastify').RouteOptions}
  */
-module.exports.getUser = (fastify) => ({
-  url: '/users/~',
+module.exports.authInfo = (fastify) => ({
+  url: '/auth/info',
   method: 'GET',
   preValidation: fastify.auth([
     fastify.authPipeFactory(),
     fastify.authGuardFactory(),
   ]),
   handler: async (request, reply) => {
-    const { userId } = fastify.requestContext.get('sessionData');
-
-    const getUser = new GetUserAction(request.server.domainContext);
-
-    const user = await getUser.execute(userId);
-
-    return reply.code(200).send(user);
+    return request.requestContext.get('sessionData');
   },
   schema: {
-    tags: ['Users'],
+    tags: ['Auth'],
     headers: {
       type: 'object',
       properties: {
@@ -34,12 +26,14 @@ module.exports.getUser = (fastify) => ({
       required: ['x-auth-token'],
     },
     response: {
-      200: {
+      204: {
         type: 'object',
         properties: {
-          id: { type: 'string', format: 'uuid' }, // UUID for the ID
-          cartRef: { type: ['string', 'null'], nullable: true }, // cartRef can be either a string or null
+          id: { type: 'string' },
+          username: { type: 'string' },
+          isPrivileged: { type: 'boolean' },
         },
+        required: ['id', 'username', 'isPrivileged'],
       },
     },
   },

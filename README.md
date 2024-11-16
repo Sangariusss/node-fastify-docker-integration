@@ -11,20 +11,23 @@
 
 ## Overview
 
-This project sets up a Fastify server within a Docker container, using Docker Compose for service orchestration and Nginx for API proxying and static file serving. The Fastify server integrates with both PostgreSQL and MongoDB, supporting CRUD operations on resources in each database and includes Swagger documentation.
+This project provides a scalable and modular Node.js application using Fastify, integrated with PostgreSQL and MongoDB databases. It includes REST API endpoints for user authentication, product management, cart operations, and receipt generation, all while leveraging Docker and Nginx for deployment.
 
 ### Features
 
-- **Fastify REST API** with CRUD functionality for PostgreSQL and MongoDB.
-- **Swagger Documentation** available at `/api/docs`, with Basic Authentication enabled for restricted access.
-- **Nginx**: Serves static files and proxies API requests to the Fastify backend, caching static files for improved performance.
-- **Docker**: Containerized deployment with Docker Compose for seamless service orchestration.
+- **Modular Architecture**: Domain-driven design with clear separation of concerns.
+- **Authentication & Authorization**: JWT-based secure authentication.
+- **CRUD Operations**: Full support for CRUD on products, users, and carts.
+- **Swagger Documentation**: API documentation with restricted access.
+- **Dockerized Deployment**: Fastify, PostgreSQL, MongoDB, and Nginx in Docker containers.
+- **Development Tools**: Pre-configured ESLint, Prettier, and Husky for linting and code formatting.
 
 ## Usage
 
 ### Setup and Deployment
 
-1. **Install Docker and Docker Compose**: Ensure they are installed on your system.
+1. **Install Dependencies**:
+   Ensure Docker, Docker Compose, and PNPM are installed.
 
 2. **Clone the Repository**:
 
@@ -34,7 +37,7 @@ This project sets up a Fastify server within a Docker container, using Docker Co
    ```
 
 3. **Configure Environment Variables**:
-   Update the `.env` file with the database credentials and any other configurations needed.
+   Copy `example.env` to `.env` and configure necessary variables.
 
 4. **Run the Application**:
 
@@ -43,76 +46,92 @@ This project sets up a Fastify server within a Docker container, using Docker Co
    ```
 
 5. **Access the Application**:
-   - Visit `http://localhost` for static files served by Nginx.
-   - Use `http://localhost/api` for the REST API endpoints (details below).
-   - Access Swagger documentation at `http://localhost/api/docs` (requires Basic Authentication).
+   - `https://localhost`: Serves the static site.
+   - `https://localhost/api`: REST API.
+   - `https://localhost/api/docs`: Swagger documentation.
 
 ## File Structure
 
-- **html/**: Contains static HTML files served by Nginx.
+### Root Structure
 
-  - `404.html`: Custom 404 error page.
+```plaintext
+.husky/                 # Git hooks for pre-commit checks
+.vscode/                # VSCode configuration
+html/                   # Static HTML files for Nginx
+nginx/                  # Nginx configuration and SSL setup
+node_modules/           # Dependencies
+src/                    # Source code (modular structure)
+static/                 # Static assets (e.g., favicon)
+.dockerignore           # Files to ignore in Docker context
+.editorconfig           # Editor configuration
+.env                    # Environment variables
+.prettierrc             # Prettier configuration
+package.json            # Node.js dependencies and scripts
+README.md               # Project documentation
+```
 
-- **nginx/**: Nginx configuration folder.
+### `src/` Structure
 
-  - `nginx.conf`: Configures Nginx proxying and static file handling.
+```plaintext
+src/
+  app/                  # Core application logic
+    actions/            # Business logic (grouped by domain)
+    context.js          # Application-wide context
+    global.d.ts         # Global TypeScript definitions
+  domain/               # Domain models and interfaces
+    entities/           # Entity definitions
+    repositories/       # Repository interfaces
+    services/           # Domain services
+  infra/                # Infrastructure layer
+    database/           # Database configuration
+    repositories/       # Implementations of repository interfaces
+  presentation/         # Presentation layer (routes, middleware, etc.)
+    auth/               # Authentication-related logic
+    routes/             # Route handlers
+    docs/               # Swagger API documentation
+    context/            # Request/response context utilities
+  static/               # Static assets
+```
 
-- **static/**: Static assets (e.g., favicon).
+### Key Files
 
-  - `favicon.svg`: Favicon for the application.
-
-- **app.js**: The main Fastify application file.
-- **docker-compose.yml**: Defines services for Fastify, PostgreSQL, and MongoDB.
-- **Dockerfile**: Docker instructions for building the Fastify app image.
-- **LICENSE**: Project license.
-- **package.json**: Node.js dependencies and metadata.
+- `app.js`: Main Fastify application file.
+- `docker-compose.yaml`: Service definitions for Docker.
+- `Dockerfile`: Fastify application Docker build file.
+- `config.js`: Application configuration.
+- `server.js`: Server entry point.
 
 ## Endpoints
 
-### Products Endpoints
+### Authentication
 
-- **GET /api/products**: Retrieve all products.
-- **GET /api/products/:id**: Retrieve a product by ID.
-- **POST /api/products**: Create a new product.
-- **PUT /api/products/:id**: Update a product by ID.
-- **DELETE /api/products/:id**: Delete a product by ID.
+- **POST /api/auth/sign-up**: Register a new user.
+- **POST /api/auth/sign-in**: Authenticate a user.
+- **POST /api/auth/refresh**: Refresh an authentication token.
 
-### User Cart Endpoints
+### Products
 
-- **GET /api/user/cart**: Retrieve the user's cart.
+- **GET /api/products**: List all products.
+- **POST /api/products**: Create a product.
+- **PUT /api/products/:id**: Update a product.
+- **DELETE /api/products/:id**: Delete a product.
+
+### Cart
+
+- **GET /api/user/cart**: View cart contents.
 - **POST /api/user/cart**: Add a product to the cart.
 - **DELETE /api/user/cart/:id**: Remove a product from the cart.
-- **POST /api/user/cart/checkout**: Checkout the cart and create a receipt.
+- **POST /api/user/cart/checkout**: Checkout the cart.
 
-### User Endpoints
+### Receipts
 
-- **GET /api/user/:id**: Retrieve a user by ID.
-- **POST /api/user**: Create a new user.
-- **GET /api/user/receipts**: Retrieve all receipts for the user.
-- **GET /api/user/receipts/:id**: Retrieve a receipt by ID.
-
-### Receipts Endpoints
-
-- **GET /api/user/receipts/:id**: Retrieve a receipt by ID.
-- **GET /api/user/receipts**: Retrieve a list of receipts.
-
-### Additional Endpoints
-
-- **Swagger Documentation**: Available at `/api/docs` (requires Basic Authentication).
-- **Static Files**:
-  - **Root `/`**: Serves `index.html` and other HTML files.
-  - **/static/**: Caches static assets for 7 days.
-
-## Nginx Configuration Highlights
-
-- **API Proxying**: `/api` is proxied to the Fastify server, stripping the `/api` prefix.
-- **Swagger Documentation**: `/api/docs` endpoint is protected with Basic Authentication.
-- **Static Caching**: Files served from `/docs/static/` are cached for 7 days.
+- **GET /api/user/receipts**: List user receipts.
+- **GET /api/user/receipts/:id**: View a specific receipt.
 
 ## Contributions
 
-Contributions, feedback, and suggestions are welcome. Please submit a pull request or open an issue for any improvements or issues.
+Contributions are welcome! Please open an issue or submit a pull request to suggest improvements.
 
 ## License
 
-This project is licensed under the ISC License. See the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
