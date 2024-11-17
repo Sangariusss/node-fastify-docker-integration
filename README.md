@@ -21,6 +21,7 @@ This project provides a scalable and modular Node.js application using Fastify, 
 - **Swagger Documentation**: API documentation with restricted access.
 - **Dockerized Deployment**: Fastify, PostgreSQL, MongoDB, and Nginx in Docker containers.
 - **Development Tools**: Pre-configured ESLint, Prettier, and Husky for linting and code formatting.
+- **Testing**: Unit tests for domain services and performance testing using Autocannon.
 
 ## Usage
 
@@ -36,8 +37,7 @@ This project provides a scalable and modular Node.js application using Fastify, 
    cd node-fastify-docker-integration
    ```
 
-3. **Configure Environment Variables**:
-   Copy `example.env` to `.env` and configure necessary variables.
+3. **Configure Environment Variables**: Copy `example.env` to `.env` and configure necessary variables.
 
 4. **Run the Application**:
 
@@ -46,9 +46,10 @@ This project provides a scalable and modular Node.js application using Fastify, 
    ```
 
 5. **Access the Application**:
-   - `https://localhost`: Serves the static site.
-   - `https://localhost/api`: REST API.
-   - `https://localhost/api/docs`: Swagger documentation.
+
+   - https://localhost: Serves the static site.
+   - https://localhost/api: REST API.
+   - https://localhost/api/docs: Swagger documentation.
 
 ## File Structure
 
@@ -105,28 +106,70 @@ src/
 
 ### Authentication
 
-- **POST /api/auth/sign-up**: Register a new user.
-- **POST /api/auth/sign-in**: Authenticate a user.
-- **POST /api/auth/refresh**: Refresh an authentication token.
+- `POST /api/auth/sign-up`: Register a new user.
+- `POST /api/auth/sign-in`: Authenticate a user.
+- `POST /api/auth/refresh`: Refresh an authentication token.
+- `POST /api/auth/log-out`: Log out a user.
 
 ### Products
 
-- **GET /api/products**: List all products.
-- **POST /api/products**: Create a product.
-- **PUT /api/products/:id**: Update a product.
-- **DELETE /api/products/:id**: Delete a product.
+- `GET /api/products`: List all products.
+- `POST /api/products`: Create a product.
+- `PUT /api/products/{id}`: Update a product.
+- `DELETE /api/products/{id}`: Delete a product.
 
 ### Cart
 
-- **GET /api/user/cart**: View cart contents.
-- **POST /api/user/cart**: Add a product to the cart.
-- **DELETE /api/user/cart/:id**: Remove a product from the cart.
-- **POST /api/user/cart/checkout**: Checkout the cart.
+- `GET /api/user/cart`: View cart contents.
+- `POST /api/user/cart`: Add a product to the cart.
+- `DELETE /api/user/cart/{productId}`: Remove a product from the cart.
+- `POST /api/user/cart/checkout`: Checkout the cart.
 
 ### Receipts
 
-- **GET /api/user/receipts**: List user receipts.
-- **GET /api/user/receipts/:id**: View a specific receipt.
+- `GET /api/user/receipts`: List user receipts.
+- `GET /api/user/receipts/{receiptId}`: View a specific receipt.
+
+## Load Testing
+
+The project includes a load testing script using Autocannon. The following routes are tested:
+
+### Test Configurations
+
+- **Login Test**:
+
+  - URL: `POST /api/auth/sign-in`
+  - Payload: `{ username: 'testuser', password: 'password123' }`
+  - Connections: 100
+  - Duration: 30 seconds
+
+- **Registration Test**:
+
+  - URL: `POST /api/auth/sign-up`
+  - Payload: `{ username: 'newuser', password: 'password123' }`
+  - Connections: 100
+  - Duration: 30 seconds
+
+- **Protected Route Test**:
+
+  - URL: `POST /api/auth/log-out`
+  - Connections: 100
+  - Duration: 30 seconds
+
+- **Static Route Test**:
+  - URL: `GET /index.html`
+  - Connections: 50
+  - Duration: 15 seconds
+
+### Running Load Tests
+
+To run the load tests, execute the following script:
+
+```bash
+node tests/load/authRoutes.js
+```
+
+This will initiate load tests for all the configured routes and log the results to the console.
 
 ## Contributions
 
