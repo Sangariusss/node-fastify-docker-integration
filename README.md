@@ -5,22 +5,26 @@
 - [Overview](#overview)
 - [Usage](#usage)
 - [File Structure](#file-structure)
+- [New Additions](#new-additions)
 - [Endpoints](#endpoints)
+- [Load Testing](#load-testing)
 - [Contributions](#contributions)
 - [License](#license)
 
 ## Overview
 
-This project provides a scalable and modular Node.js application using Fastify, integrated with PostgreSQL and MongoDB databases. It includes REST API endpoints for user authentication, product management, cart operations, and receipt generation, all while leveraging Docker and Nginx for deployment.
+This project provides a scalable and modular Node.js application using Fastify, integrated with PostgreSQL and MongoDB databases. It includes REST API endpoints for user authentication, product management, cart operations, and receipt generation, leveraging Docker and Nginx for deployment.
 
 ### Features
 
 - **Modular Architecture**: Domain-driven design with clear separation of concerns.
-- **Authentication & Authorization**: JWT-based secure authentication.
-- **CRUD Operations**: Full support for CRUD on products, users, and carts.
-- **Swagger Documentation**: API documentation with restricted access.
-- **Dockerized Deployment**: Fastify, PostgreSQL, MongoDB, and Nginx in Docker containers.
-- **Development Tools**: Pre-configured ESLint, Prettier, and Husky for linting and code formatting.
+- **Authentication & Authorization**: Secure, JWT-based authentication.
+- **CRUD Operations**: Support for CRUD on products, users, and carts.
+- **Caching**: Redis integration for enhanced performance.
+- **Cluster Mode**: PM2 for improved application scalability.
+- **Swagger Documentation**: Restricted-access API documentation.
+- **Dockerized Deployment**: Includes Fastify, PostgreSQL, MongoDB, and Nginx in containers.
+- **Development Tools**: Pre-configured ESLint, Prettier, and Husky.
 - **Testing**: Unit tests for domain services and performance testing using Autocannon.
 
 ## Usage
@@ -63,6 +67,11 @@ nginx/                  # Nginx configuration and SSL setup
 node_modules/           # Dependencies
 src/                    # Source code (modular structure)
 static/                 # Static assets (e.g., favicon)
+bin/                    # Shell scripts for app execution
+infra/                  # Infrastructure setup
+scripts/                # Utility scripts
+.pm2/                   # PM2 configuration
+prod.Dockerfile         # Optimized Dockerfile for production deployment
 .dockerignore           # Files to ignore in Docker context
 .editorconfig           # Editor configuration
 .env                    # Environment variables
@@ -77,8 +86,8 @@ README.md               # Project documentation
 src/
   app/                  # Core application logic
     actions/            # Business logic (grouped by domain)
-    context.js          # Application-wide context
-    global.d.ts         # Global TypeScript definitions
+      context.js        # Application-wide context
+      global.d.ts       # Global TypeScript definitions
   domain/               # Domain models and interfaces
     entities/           # Entity definitions
     repositories/       # Repository interfaces
@@ -86,21 +95,14 @@ src/
   infra/                # Infrastructure layer
     database/           # Database configuration
     repositories/       # Implementations of repository interfaces
-  presentation/         # Presentation layer (routes, middleware, etc.)
+    redis/              # Redis configuration
+  presentation/         # Presentation layer
     auth/               # Authentication-related logic
     routes/             # Route handlers
     docs/               # Swagger API documentation
     context/            # Request/response context utilities
   static/               # Static assets
 ```
-
-### Key Files
-
-- `app.js`: Main Fastify application file.
-- `docker-compose.yaml`: Service definitions for Docker.
-- `Dockerfile`: Fastify application Docker build file.
-- `config.js`: Application configuration.
-- `server.js`: Server entry point.
 
 ## Endpoints
 
@@ -168,8 +170,6 @@ To run the load tests, execute the following script:
 ```bash
 node tests/load/authRoutes.js
 ```
-
-This will initiate load tests for all the configured routes and log the results to the console.
 
 ## Contributions
 
